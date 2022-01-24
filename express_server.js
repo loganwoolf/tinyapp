@@ -14,6 +14,13 @@ app.get('/', (req, res) => {
   res.send("Hello!");
 });
 
+app.get('/urls', (req, res) => {
+  const templateVars = { urls: urlDatabase };
+
+  // passing templateVars _OBJECT_ into urls_index template
+  res.render('urls_index', templateVars);
+});
+
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
