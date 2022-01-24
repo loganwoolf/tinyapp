@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+app.set('view engine', 'ejs');
+// use res.render to load up and ejs view file from ./views
 
 const PORT = 3000;
 
