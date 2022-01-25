@@ -28,6 +28,23 @@ const generateRandomString = (len) => {
   return outputStr;
 };
 
+const checkURL = (url) => {
+  // if single dot, add 'https://www.'
+  if (url.match(/\./g).length === 1) {
+    url = `https://www.${url}`;
+  }
+
+  // convert existing http to https
+  url.replace('http://', 'https://');
+  
+  // if double dot, add 'https://' if missing
+  if (url.search('https://') !== 0) {
+    url = `https://${url}`;
+  }
+
+  return url;
+};
+
 app.post('/urls/:shortURL/delete', (req, res) => {
   const key = req.params.shortURL;
   // console.log(req.body);
@@ -35,20 +52,23 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+app.post('/urls/:shortURL/edit', (req, res) => {
+  // console.log(req.params);
+  let shortKey = req.params.shortURL;
+  // console.log(req.body);
+  let newURL = checkURL(req.body.newURL);
+
+  urlDatabase[shortKey] = newURL;
+
+  res.redirect('/urls');
+});
+
 app.post("/urls", (req, res) => {
   // console.log(req.body);
   const newKey = generateRandomString(6);
-  let long = req.body.longURL;
-  if (long.match(/\./g).length === 1) {
-    long = `https://www.${long}`;
-  } else if (long.search('http://') === 0) {
-    long.replace('http://', 'https://');
-  }
-  if (long.search('https://') !== 0) {
-    long = `https://${long}`;
-  }
+  let longURL = checkURL(req.body.longURL);
 
-  urlDatabase[newKey] = long;
+  urlDatabase[newKey] = longURL;
   res.redirect(`/urls/${newKey}`);
 });
 
