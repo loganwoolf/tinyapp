@@ -12,6 +12,22 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const generateRandomString = (len) => {
+  let outputStr = "";
+  for (let i = 0; i < len; i++) {
+    let rndm = Math.floor(Math.random() * 62);
+    if (rndm <= 9) {
+      outputStr += String.fromCharCode(rndm + 48);
+    } else if (rndm >= 36) {
+      outputStr += String.fromCharCode(rndm + 61);
+    } else {
+      outputStr += String.fromCharCode(rndm + 55);
+    }
+  }
+
+  return outputStr;
+};
+
 app.get('/', (req, res) => {
   res.send("Hello!");
 });
