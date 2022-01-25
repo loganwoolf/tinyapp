@@ -1,6 +1,8 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
 app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: true}));
 // use res.render to load up and ejs view file from ./views
 
 const PORT = 3000;
@@ -12,6 +14,11 @@ const urlDatabase = {
 
 app.get('/', (req, res) => {
   res.send("Hello!");
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body);
+  res.send('Ok');
 });
 
 app.get('/urls/new', (req, res) => {
