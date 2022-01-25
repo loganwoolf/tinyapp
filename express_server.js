@@ -33,8 +33,11 @@ app.get('/', (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send('Ok');
+  // console.log(req.body);
+  const newKey = generateRandomString(6);
+
+  urlDatabase[newKey] = req.body.longURL;
+  res.redirect(`/urls/${newKey}`);
 });
 
 app.get('/urls/new', (req, res) => {
