@@ -74,6 +74,13 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${newKey}`);
 });
 
+app.post('/login', (req, res) => {
+  // console.log(req.body);
+  res.cookie('username', req.body.username);
+
+  res.redirect('/urls');
+});
+
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
