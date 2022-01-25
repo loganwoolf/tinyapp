@@ -36,7 +36,9 @@ app.post("/urls", (req, res) => {
   // console.log(req.body);
   const newKey = generateRandomString(6);
   let long = req.body.longURL;
-  if (long.search('http://') === 0) {
+  if (long.match(/\./g).length === 1) {
+    long = `https://www.${long}`;
+  } else if (long.search('http://') === 0) {
     long.replace('http://', 'https://');
   }
   if (long.search('https://') !== 0) {
