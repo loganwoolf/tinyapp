@@ -28,8 +28,11 @@ const generateRandomString = (len) => {
   return outputStr;
 };
 
-app.get('/', (req, res) => {
-  res.send("Hello!");
+app.post('/urls/:shortURL/delete', (req, res) => {
+  const key = req.params.shortURL;
+  // console.log(req.body);
+  delete urlDatabase[key];
+  res.redirect('/urls');
 });
 
 app.post("/urls", (req, res) => {
@@ -85,6 +88,10 @@ app.get('/urls.json', (req, res) => {
 
 app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
+});
+
+app.get('/', (req, res) => {
+  res.send("Hello!");
 });
 
 app.listen(PORT, () => {
