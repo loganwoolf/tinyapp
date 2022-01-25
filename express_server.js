@@ -35,8 +35,15 @@ app.get('/', (req, res) => {
 app.post("/urls", (req, res) => {
   // console.log(req.body);
   const newKey = generateRandomString(6);
+  let long = req.body.longURL;
+  if (long.search('http://') === 0) {
+    long.replace('http://', 'https://');
+  }
+  if (long.search('https://') !== 0) {
+    long = `https://${long}`;
+  }
 
-  urlDatabase[newKey] = req.body.longURL;
+  urlDatabase[newKey] = long;
   res.redirect(`/urls/${newKey}`);
 });
 
@@ -61,6 +68,13 @@ app.get('/urls', (req, res) => {
 
   // passing templateVars _OBJECT_ into urls_index template
   res.render('urls_index', templateVars);
+});
+
+app.get('/u/:shortURL', (req, res) => {
+
+  const longURL = urlDatabase[req.params.shortURL];
+
+  res.redirect(longURL);
 });
 
 app.get('/urls.json', (req, res) => {
