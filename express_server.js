@@ -14,6 +14,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  "Yuol2b": {
+    id: "Yuol2b",
+    email: "misterman@gmail.com",
+    password: "apeman"
+  },
+  "yqB7hV": {
+    id: "yqB7hV",
+    email: "bigguy@gmail.com",
+    password: "grapeman"
+  }
+};
+
 const generateRandomString = (len) => {
   let outputStr = "";
   for (let i = 0; i < len; i++) {
@@ -88,7 +101,15 @@ app.post('/logout', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  console.log('req.body:', req.body);
+  const newID = generateRandomString(6);
+  users[newID] = {
+    id: newID,
+    email: req.body.email,
+    password: req.body.password
+  };
+
+  res.cookie('user_id', newID);
+  res.redirect('/urls');
 });
 
 app.get('/urls/new', (req, res) => {
@@ -135,11 +156,9 @@ app.get('/urls.json', (req, res) => {
 
 app.get('/register', (req, res) => {
   res.render('urls_register');
-
 });
 
 app.get('/', (req, res) => {
-  // res.send("Hello!");
   res.redirect('/urls');
 });
 
