@@ -87,6 +87,10 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls');
 });
 
+app.post('/register', (req, res) => {
+  console.log('req.body:', req.body);
+});
+
 app.get('/urls/new', (req, res) => {
   const templateVars = {
     username: req.cookies.username,
@@ -129,12 +133,14 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get('/hello', (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
+app.get('/register', (req, res) => {
+  res.render('urls_register');
+
 });
 
 app.get('/', (req, res) => {
-  res.send("Hello!");
+  // res.send("Hello!");
+  res.redirect('/urls');
 });
 
 app.listen(PORT, () => {
