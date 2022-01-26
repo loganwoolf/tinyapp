@@ -10,8 +10,9 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
+    <span class="pr-3 navbar-text">Current User: <%= username %> </span>
     <form action="/login" method="post">
-      <label>
+      <label class="navbar-text">
         <input type="text" name="username">
       </label>
       <button class="btn btn-dark btn-sm" type="submit">Log In</button>
