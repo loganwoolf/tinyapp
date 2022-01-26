@@ -27,6 +27,15 @@ const users = {
   }
 };
 
+const getUserIDFromEmail = (email) => {
+  for (let userID in users) {
+    if (users[userID].email === email) {
+      return users[userID].id;
+    }
+  }
+  return null;
+};
+
 const generateRandomString = (len) => {
   let outputStr = "";
   for (let i = 0; i < len; i++) {
@@ -60,17 +69,17 @@ const checkURL = (url) => {
   return url;
 };
 
+//
+// // POST routes // //
+//
 app.post('/urls/:shortURL/delete', (req, res) => {
   const key = req.params.shortURL;
-  // console.log(req.body);
   delete urlDatabase[key];
   res.redirect('/urls');
 });
 
 app.post('/urls/:shortURL/edit', (req, res) => {
-  // console.log(req.params);
   let shortKey = req.params.shortURL;
-  // console.log(req.body);
   let newURL = checkURL(req.body.newURL);
 
   urlDatabase[shortKey] = newURL;
@@ -79,7 +88,6 @@ app.post('/urls/:shortURL/edit', (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  // console.log(req.body);
   const newKey = generateRandomString(6);
   let longURL = checkURL(req.body.longURL);
 
@@ -88,8 +96,11 @@ app.post("/urls", (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  // console.log(req.body);
-  res.cookie('username', req.body.username);
+  const loginEmail = req.body.username;
+  const userID = getUserIDFromEmail(loginEmail);
+  if (userID) {
+    res.cookie('user_id', userID);
+  }
 
   res.redirect('/urls');
 });
@@ -112,21 +123,28 @@ app.post('/register', (req, res) => {
   res.redirect('/urls');
 });
 
+//
+// // GET routes // //
+//
 app.get('/urls/new', (req, res) => {
+  const userKey = req.cookies.user_id;
+  const userObj = users[userKey];
   const templateVars = {
-    username: req.cookies.username,
+    user: userObj,
+    // username: req.cookies.username,
   };
 
   res.render('urls_new', templateVars);
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  // console.log(req.params) // { shortURL: 'whatever' }
-
+  const userKey = req.cookies.user_id;
+  const userObj = users[userKey];
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies.username,
+    user: userObj,
+    // username: req.cookies.username,
   };
   
   res.render('urls_show', templateVars);
@@ -134,9 +152,12 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
+  const userKey = req.cookies.user_id;
+  const userObj = users[userKey];
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies.username,
+    user: userObj,
+    // username: req.cookies.username,
   };
 
   // passing templateVars _OBJECT_ into urls_index template
@@ -163,6 +184,6 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}`);
+  console.log(`Express listening on port ${PORT}`);
 });
 
