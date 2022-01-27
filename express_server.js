@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
 
 const { urlDatabase, users } = require('./mod/data');
 const { utilities } = require('./mod/utilities');
@@ -13,6 +14,10 @@ const {
   verifyUserCookie,
 } = utilities(urlDatabase, users);
 
+/* var bcrypt = require('bcryptjs');
+var salt = bcrypt.genSaltSync(10);
+var hash = bcrypt.hashSync("B4c0/\/", salt); */
+// const salt = bcrypt.genSaltSync(10);
 
 const app = express();
 
@@ -76,7 +81,7 @@ app.post('/login', (req, res) => {
   const loginEmail = req.body.email;
   const loginPassword = req.body.password;
   const userID = getUserIDFromEmail(loginEmail);
-  if (userID && users[userID].password === loginPassword) {
+  if (userID && bcrypt.compareSync(loginPassword, users[userID].password)) {
     res.cookie('user_id', userID);
     res.redirect('/urls');
   } else {
@@ -105,7 +110,7 @@ app.post('/register', (req, res) => {
     users[newID] = {
       id: newID,
       email: req.body.email,
-      password: req.body.password
+      password: bcrypt.hashSync(req.body.password, 10),
     };
     res.cookie('user_id', newID);
     res.redirect('/urls');

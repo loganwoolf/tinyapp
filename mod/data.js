@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 const urlDatabase = {
   b6UTxQ: {
     shortURL: "b6UTxQ",
@@ -25,12 +27,12 @@ const users = {
   "Yuol2b": {
     id: "Yuol2b",
     email: "misterman@gmail.com",
-    password: "apeman"
+    password: bcrypt.hashSync('apeman'),
   },
   "yqB7hV": {
     id: "yqB7hV",
     email: "bigguy@gmail.com",
-    password: "grapeman"
+    password: bcrypt.hashSync('grapeman'),
   }
 };
 
