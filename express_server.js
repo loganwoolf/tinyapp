@@ -142,7 +142,6 @@ app.get('/urls/new', (req, res) => {
   const userObj = users[userKey];
   const templateVars = {
     user: userObj,
-    // username: req.cookies.username,
   };
 
   res.render('urls_new', templateVars);
@@ -155,7 +154,6 @@ app.get('/urls/:shortURL', (req, res) => {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
     user: userObj,
-    // username: req.cookies.username,
   };
   
   res.render('urls_show', templateVars);
@@ -168,7 +166,6 @@ app.get('/urls', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     user: userObj,
-    // username: req.cookies.username,
   };
 
   // passing templateVars _OBJECT_ into urls_index template
