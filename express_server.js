@@ -185,11 +185,21 @@ app.get('/urls.json', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('urls_login');
+  const userKey = req.cookies.user_id;
+  const userObj = users[userKey];
+  const templateVars = {
+    user: userObj,
+  };
+  res.render('urls_login', templateVars);
 });
 
 app.get('/register', (req, res) => {
-  res.render('urls_register');
+  const userKey = req.cookies.user_id;
+  const userObj = users[userKey];
+  const templateVars = {
+    user: userObj,
+  };
+  res.render('urls_register', templateVars);
 });
 
 app.get('/', (req, res) => {
