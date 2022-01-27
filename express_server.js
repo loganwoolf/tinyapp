@@ -5,7 +5,6 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
-// use res.render to load up and ejs view file from ./views
 
 const PORT = 3000;
 
@@ -109,17 +108,32 @@ const getOwnersLinks = (db, ownerID) => {
 //
 app.post('/urls/:shortURL/delete', (req, res) => {
   // check credentials for deleting key
-  const key = req.params.shortURL;
-  delete urlDatabase[key];
-  res.redirect('/urls');
+  const shortKey = req.params.shortURL;
+  if (req.cookies.user_id === urlDatabase[shortKey].userID) {
+    delete urlDatabase[shortKey];
+    res.redirect('/urls');
+  } else {
+    res.status(401);
+    res.statusMessage = 'Unauthorized';
+    res.end('Error Status 401: You do not have permission to delete this URL.');
+  }
+
 });
 
 app.post('/urls/:shortURL/edit', (req, res) => {
   //check credentials for editing key
-  let shortKey = req.params.shortURL;
-  let newURL = checkURL(req.body.newURL);
-  urlDatabase[shortKey].longURL = newURL;
-  res.redirect('/urls');
+  const shortKey = req.params.shortURL;
+  // check if user from cookie is owner of route
+  if (req.cookies.user_id === urlDatabase[shortKey].userID) {
+    const newURL = checkURL(req.body.newURL);
+    urlDatabase[shortKey].longURL = newURL;
+    res.redirect('/urls');
+  } else {
+    res.status(401);
+    res.statusMessage = 'Unauthorized';
+    res.end('Error Status 401: You do not have permission to edit this URL.');
+  }
+
 });
 
 app.post("/urls", (req, res) => {
@@ -258,7 +272,7 @@ app.get('/', (req, res) => {
   res.redirect('/urls');
 });
 
+
 app.listen(PORT, () => {
   console.log(`Express listening on port ${PORT}`);
 });
-
