@@ -96,13 +96,17 @@ app.post("/urls", (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  const loginEmail = req.body.username;
+  const loginEmail = req.body.email;
+  const loginPassword = req.body.password;
   const userID = getUserIDFromEmail(loginEmail);
-  if (userID) {
+  if (userID && users[userID].password === loginPassword) {
     res.cookie('user_id', userID);
+    res.redirect('/urls');
+  } else {
+    res.status(403);
+    res.end('Error Status 403 - Credentials Not Found');
   }
 
-  res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
@@ -113,13 +117,11 @@ app.post('/logout', (req, res) => {
 
 app.post('/register', (req, res) => {
   if (!req.body.email || !req.body.password) {
-    res.status = 400;
-    res.write('Error Status 400 -- Bad Request, ensure all fields are complete.');
-    res.end();
+    res.status(400);
+    res.end('Error Status 400 -- Bad Request, ensure all fields are complete.');
   } else if (getUserIDFromEmail(req.body.email)) {
-    res.status = 400;
-    res.write('Error Status 400 -- Email already in use.');
-    res.end();
+    res.status(400);
+    res.end('Error Status 400 -- Email already in use.');
   } else {
     const newID = generateRandomString(6);
     users[newID] = {
