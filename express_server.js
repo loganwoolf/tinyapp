@@ -131,8 +131,9 @@ app.get('/urls/:shortURL', (req, res) => {
   };
   if (urlDatabase[req.params.shortURL].userID === userKey) {
     res.render('urls_show', templateVars);
+  } else {
+    res.render('urls_show', {user: undefined});
   }
-  res.render('urls_show', {user: undefined});
 });
 
 app.get('/urls', (req, res) => {
