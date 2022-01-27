@@ -11,8 +11,9 @@
   <%- include('partials/_header') %>
 
   <div class="card text-center">
-      <div class="card-header"></div>
-      <div class="card-body">
+    <div class="card-header"></div>
+    <div class="card-body">
+      <% if (user) { %>
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <form method ="POST" action="/urls/<%= shortURL %>/edit">
           <label>New long URL:
@@ -21,7 +22,11 @@
           <button class="btn btn-primary" type="submit">Submit</button>
         </form>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
-      </div>
+      <% } else { %>
+      <h5>Please log in</h5>
+      
+      <% } %>
+    </div>
     <div class="card-footer text-muted"></div>
   </div>
   <!-- Bootstrap JS -->

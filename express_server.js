@@ -204,7 +204,10 @@ app.get('/urls/:shortURL', (req, res) => {
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: userObj,
   };
-  res.render('urls_show', templateVars);
+  if (urlDatabase[req.params.shortURL].userID === userKey) {
+    res.render('urls_show', templateVars);
+  }
+  res.render('urls_show', {user: undefined});
 });
 
 app.get('/urls', (req, res) => {
