@@ -2,8 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
-const { urlDatabase, users } = require('./data');
-const { checkURL, generateRandomString, getOwnersLinks, getUserIDFromEmail, verifyUserCookie } = require('./utilities');
+const { urlDatabase, users } = require('./mod/data');
+const { utilities } = require('./mod/utilities');
+
+const {
+  checkURL,
+  generateRandomString,
+  getOwnersLinks,
+  getUserIDFromEmail,
+  verifyUserCookie,
+} = utilities(urlDatabase, users);
+
 
 const app = express();
 
@@ -140,7 +149,7 @@ app.get('/urls', (req, res) => {
   const userKey = req.cookies.user_id;
   const userObj = users[userKey];
   const templateVars = {
-    urls: getOwnersLinks(urlDatabase, userKey),
+    urls: getOwnersLinks(userKey),
     user: userObj,
   };
   res.render('urls_index', templateVars);
