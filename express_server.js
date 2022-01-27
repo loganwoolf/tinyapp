@@ -184,6 +184,10 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get('/login', (req, res) => {
+  res.render('urls_login');
+});
+
 app.get('/register', (req, res) => {
   res.render('urls_register');
 });
