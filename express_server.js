@@ -106,21 +106,30 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
 
   res.redirect('/urls');
 });
 
 app.post('/register', (req, res) => {
-  const newID = generateRandomString(6);
-  users[newID] = {
-    id: newID,
-    email: req.body.email,
-    password: req.body.password
-  };
-
-  res.cookie('user_id', newID);
-  res.redirect('/urls');
+  if (!req.body.email || !req.body.password) {
+    res.status = 400;
+    res.write('Error Status 400 -- Bad Request, ensure all fields are complete.');
+    res.end();
+  } else if (getUserIDFromEmail(req.body.email)) {
+    res.status = 400;
+    res.write('Error Status 400 -- Email already in use.');
+    res.end();
+  } else {
+    const newID = generateRandomString(6);
+    users[newID] = {
+      id: newID,
+      email: req.body.email,
+      password: req.body.password
+    };
+    res.cookie('user_id', newID);
+    res.redirect('/urls');
+  }
 });
 
 //
