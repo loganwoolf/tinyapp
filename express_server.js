@@ -11,7 +11,7 @@ const PORT = 3000;
 
 const urlDatabase = {
   b6UTxQ: {
-    longURL: "https://www.cocacola.com",
+    longURL: "https://www.coca-cola.com",
     userID: "Yuol2b"
   },
   g6U87y: {
@@ -204,8 +204,15 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+  if (urlDatabase[req.params.shortURL]) {
+    const longURL = urlDatabase[req.params.shortURL].longURL;
+    res.redirect(longURL);
+  } else {
+    res.status(404);
+    res.statusMessage = 'Not Found';
+    res.end('Error Status 404: Resource Not Found');
+  }
+
 });
 
 app.get('/urls.json', (req, res) => {
