@@ -10,8 +10,22 @@ app.use(cookieParser());
 const PORT = 3000;
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+    longURL: "https://www.cocacola.com",
+    userID: "Yuol2b"
+  },
+  g6U87y: {
+    longURL: "https://www.pepsi.com",
+    userID: "Yuol2b"
+  },
+  i3BoGr: {
+    longURL: "https://www.google.com",
+    userID: "yqB7hV"
+  },
+  j3bon7: {
+    longURL: "https://www.yahoo.ca",
+    userID: "yqB7hV"
+  }
 };
 
 const users = {
@@ -80,26 +94,28 @@ const checkURL = (url) => {
 // // POST routes // //
 //
 app.post('/urls/:shortURL/delete', (req, res) => {
+  // check credentials for deleting key
   const key = req.params.shortURL;
   delete urlDatabase[key];
   res.redirect('/urls');
 });
 
 app.post('/urls/:shortURL/edit', (req, res) => {
+  //check credentials for editing key
   let shortKey = req.params.shortURL;
   let newURL = checkURL(req.body.newURL);
-
-  urlDatabase[shortKey] = newURL;
-
+  urlDatabase[shortKey].longURL = newURL;
   res.redirect('/urls');
 });
 
 app.post("/urls", (req, res) => {
   if (verifyUserCookie(req.cookies.user_id)) {
     const newKey = generateRandomString(6);
-    let longURL = checkURL(req.body.longURL);
-    
-    urlDatabase[newKey] = longURL;
+    let newURL = checkURL(req.body.longURL);
+    urlDatabase[newKey] = {
+      longURL: newURL,
+      userID: req.cookies.user_id,
+    };
     res.redirect(`/urls/${newKey}`);
   } else {
     res.status(401);
@@ -120,12 +136,10 @@ app.post('/login', (req, res) => {
     res.statusMessage = 'Forbidden';
     res.end('Error Status 403: Credentials Not Found');
   }
-
 });
 
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
-
   res.redirect('/urls');
 });
 
@@ -173,12 +187,10 @@ app.get('/urls/:shortURL', (req, res) => {
   const userObj = users[userKey];
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user: userObj,
   };
-  
   res.render('urls_show', templateVars);
-  
 });
 
 app.get('/urls', (req, res) => {
@@ -188,15 +200,11 @@ app.get('/urls', (req, res) => {
     urls: urlDatabase,
     user: userObj,
   };
-
-  // passing templateVars _OBJECT_ into urls_index template
   res.render('urls_index', templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
-
-  const longURL = urlDatabase[req.params.shortURL];
-
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
