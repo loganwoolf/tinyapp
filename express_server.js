@@ -27,6 +27,13 @@ const users = {
   }
 };
 
+const verifyUserCookie = (id) => {
+  if (users[id]) {
+    return true;
+  }
+  return false;
+};
+
 const getUserIDFromEmail = (email) => {
   for (let userID in users) {
     if (users[userID].email === email) {
@@ -88,11 +95,17 @@ app.post('/urls/:shortURL/edit', (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  const newKey = generateRandomString(6);
-  let longURL = checkURL(req.body.longURL);
-
-  urlDatabase[newKey] = longURL;
-  res.redirect(`/urls/${newKey}`);
+  if (verifyUserCookie(req.cookies.user_id)) {
+    const newKey = generateRandomString(6);
+    let longURL = checkURL(req.body.longURL);
+    
+    urlDatabase[newKey] = longURL;
+    res.redirect(`/urls/${newKey}`);
+  } else {
+    res.status(401);
+    res.statusMessage = 'Unauthorized';
+    res.end('Error Status 401: You can not create URLs if not logged in');
+  }
 });
 
 app.post('/login', (req, res) => {
@@ -104,7 +117,8 @@ app.post('/login', (req, res) => {
     res.redirect('/urls');
   } else {
     res.status(403);
-    res.end('Error Status 403 - Credentials Not Found');
+    res.statusMessage = 'Forbidden';
+    res.end('Error Status 403: Credentials Not Found');
   }
 
 });
@@ -118,10 +132,12 @@ app.post('/logout', (req, res) => {
 app.post('/register', (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.status(400);
-    res.end('Error Status 400 -- Bad Request, ensure all fields are complete.');
+    res.statusMessage = 'Bad Request';
+    res.end('Error Status 400: Bad Request, ensure all fields are complete.');
   } else if (getUserIDFromEmail(req.body.email)) {
     res.status(400);
-    res.end('Error Status 400 -- Email already in use.');
+    res.statusMessage = 'Bad Request';
+    res.end('Error Status 400:Email already in use.');
   } else {
     const newID = generateRandomString(6);
     users[newID] = {
@@ -139,12 +155,17 @@ app.post('/register', (req, res) => {
 //
 app.get('/urls/new', (req, res) => {
   const userKey = req.cookies.user_id;
-  const userObj = users[userKey];
-  const templateVars = {
-    user: userObj,
-  };
-
-  res.render('urls_new', templateVars);
+  if (verifyUserCookie(userKey)) {
+    const userObj = users[userKey];
+    const templateVars = {
+      user: userObj,
+    };
+    res.render('urls_new', templateVars);
+  } else {
+    res.status(401);
+    res.statusMessage = 'Unauthorized';
+    res.redirect('/login');
+  }
 });
 
 app.get('/urls/:shortURL', (req, res) => {
