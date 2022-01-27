@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 
 const { urlDatabase, users } = require('./mod/data');
@@ -24,7 +25,11 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+// app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['eloquent creek gopher', 'misbehaving blue donkey'],
+}));
 
 const PORT = 3000;
 
@@ -34,7 +39,7 @@ const PORT = 3000;
 app.post('/urls/:shortURL/delete', (req, res) => {
   // check credentials for deleting key
   const shortKey = req.params.shortURL;
-  if (req.cookies.user_id === urlDatabase[shortKey].userID) {
+  if (req.session.userID === urlDatabase[shortKey].userID) {
     delete urlDatabase[shortKey];
     res.redirect('/urls');
   } else {
@@ -49,7 +54,7 @@ app.post('/urls/:shortURL/edit', (req, res) => {
   //check credentials for editing key
   const shortKey = req.params.shortURL;
   // check if user from cookie is owner of route
-  if (req.cookies.user_id === urlDatabase[shortKey].userID) {
+  if (req.session.userID === urlDatabase[shortKey].userID) {
     const newURL = checkURL(req.body.newURL);
     urlDatabase[shortKey].longURL = newURL;
     res.redirect('/urls');
@@ -62,12 +67,12 @@ app.post('/urls/:shortURL/edit', (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  if (verifyUserCookie(req.cookies.user_id)) {
+  if (verifyUserCookie(req.session.userID)) {
     const newKey = generateRandomString(6);
     let newURL = checkURL(req.body.longURL);
     urlDatabase[newKey] = {
       longURL: newURL,
-      userID: req.cookies.user_id,
+      userID: req.session.userID,
     };
     res.redirect(`/urls/${newKey}`);
   } else {
@@ -82,7 +87,7 @@ app.post('/login', (req, res) => {
   const loginPassword = req.body.password;
   const userID = getUserIDFromEmail(loginEmail);
   if (userID && bcrypt.compareSync(loginPassword, users[userID].password)) {
-    res.cookie('user_id', userID);
+    req.session.userID = userID;
     res.redirect('/urls');
   } else {
     res.status(403);
@@ -92,7 +97,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/urls');
 });
 
@@ -112,7 +117,7 @@ app.post('/register', (req, res) => {
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 10),
     };
-    res.cookie('user_id', newID);
+    req.session.userID = newID;
     res.redirect('/urls');
   }
 });
@@ -121,7 +126,7 @@ app.post('/register', (req, res) => {
 // // GET routes // //
 //
 app.get('/urls/new', (req, res) => {
-  const userKey = req.cookies.user_id;
+  const userKey = req.session.userID;
   if (verifyUserCookie(userKey)) {
     const userObj = users[userKey];
     const templateVars = {
@@ -136,7 +141,7 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  const userKey = req.cookies.user_id;
+  const userKey = req.session.userID;
   const userObj = users[userKey];
   const templateVars = {
     shortURL: req.params.shortURL,
@@ -151,7 +156,7 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const userKey = req.cookies.user_id;
+  const userKey = req.session.userID;
   const userObj = users[userKey];
   const templateVars = {
     urls: getOwnersLinks(userKey),
@@ -177,7 +182,7 @@ app.get('/urls.json', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const userKey = req.cookies.user_id;
+  const userKey = req.session.userID;
   const userObj = users[userKey];
   const templateVars = {
     user: userObj,
@@ -186,7 +191,7 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  const userKey = req.cookies.user_id;
+  const userKey = req.session.userID;
   const userObj = users[userKey];
   const templateVars = {
     user: userObj,
