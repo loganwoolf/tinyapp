@@ -1,107 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+
+const { urlDatabase, users } = require('./data');
+const { checkURL, generateRandomString, getOwnersLinks, getUserIDFromEmail, verifyUserCookie } = require('./utilities');
+
 const app = express();
+
+
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 const PORT = 3000;
-
-const urlDatabase = {
-  b6UTxQ: {
-    shortURL: "b6UTxQ",
-    longURL: "https://www.coca-cola.com",
-    userID: "Yuol2b"
-  },
-  g6U87y: {
-    shortURL: "g6U87y",
-    longURL: "https://www.pepsi.com",
-    userID: "Yuol2b"
-  },
-  i3BoGr: {
-    shortURL: "i3BoGr",
-    longURL: "https://www.google.com",
-    userID: "yqB7hV"
-  },
-  j3bon7: {
-    shortURL: "j3bon7",
-    longURL: "https://www.yahoo.ca",
-    userID: "yqB7hV"
-  }
-};
-
-const users = {
-  "Yuol2b": {
-    id: "Yuol2b",
-    email: "misterman@gmail.com",
-    password: "apeman"
-  },
-  "yqB7hV": {
-    id: "yqB7hV",
-    email: "bigguy@gmail.com",
-    password: "grapeman"
-  }
-};
-
-const verifyUserCookie = (id) => {
-  if (users[id]) {
-    return true;
-  }
-  return false;
-};
-
-const getUserIDFromEmail = (email) => {
-  for (let userID in users) {
-    if (users[userID].email === email) {
-      return users[userID].id;
-    }
-  }
-  return null;
-};
-
-const generateRandomString = (len) => {
-  let outputStr = "";
-  for (let i = 0; i < len; i++) {
-    let rndm = Math.floor(Math.random() * 62);
-    if (rndm <= 9) {
-      outputStr += String.fromCharCode(rndm + 48);
-    } else if (rndm >= 36) {
-      outputStr += String.fromCharCode(rndm + 61);
-    } else {
-      outputStr += String.fromCharCode(rndm + 55);
-    }
-  }
-
-  return outputStr;
-};
-
-const checkURL = (url) => {
-  // if single dot, add 'https://www.'
-  if (url.match(/\./g).length === 1) {
-    url = `https://www.${url}`;
-  }
-
-  // convert existing http to https
-  url.replace('http://', 'https://');
-  
-  // if double dot, add 'https://' if missing
-  if (url.search('https://') !== 0) {
-    url = `https://${url}`;
-  }
-
-  return url;
-};
-
-const getOwnersLinks = (db, ownerID) => {
-  const ownersLinks = {};
-  for (let key in db) {
-    if (db[key].userID === ownerID) {
-      ownersLinks[key] = db[key];
-    }
-  }
-  return ownersLinks;
-};
 
 //
 // // POST routes // //
