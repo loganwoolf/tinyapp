@@ -71,8 +71,10 @@ app.post("/urls", (req, res) => {
     const newKey = generateRandomString(6);
     let newURL = checkURL(req.body.longURL);
     urlDatabase[newKey] = {
+      shortURL: newKey,
       longURL: newURL,
       userID: req.session.userID,
+      visits: 0
     };
     res.redirect(`/urls/${newKey}`);
   } else {
