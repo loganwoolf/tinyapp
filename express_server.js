@@ -148,6 +148,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
+    visits: urlDatabase[req.params.shortURL].visits,
     user: userObj,
   };
   if (urlDatabase[req.params.shortURL].userID === userKey) {
@@ -204,7 +205,10 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.redirect('/urls');
+  if (verifyUserCookie(req.session.userID)) {
+    return res.redirect('/urls');
+  }
+  return res.redirect('/login');
 });
 
 
