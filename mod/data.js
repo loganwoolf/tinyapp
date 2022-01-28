@@ -4,22 +4,26 @@ const urlDatabase = {
   b6UTxQ: {
     shortURL: "b6UTxQ",
     longURL: "https://www.coca-cola.com",
-    userID: "Yuol2b"
+    userID: "Yuol2b",
+    visits: 10,
   },
   g6U87y: {
     shortURL: "g6U87y",
     longURL: "https://www.pepsi.com",
-    userID: "Yuol2b"
+    userID: "Yuol2b",
+    visits: 20,
   },
   i3BoGr: {
     shortURL: "i3BoGr",
     longURL: "https://www.google.com",
-    userID: "yqB7hV"
+    userID: "yqB7hV",
+    visits: 30,
   },
   j3bon7: {
     shortURL: "j3bon7",
     longURL: "https://www.yahoo.ca",
-    userID: "yqB7hV"
+    userID: "yqB7hV",
+    visits: 40,
   }
 };
 

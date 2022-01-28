@@ -167,7 +167,9 @@ app.get('/urls', (req, res) => {
 
 app.get('/u/:shortURL', (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
-    const longURL = urlDatabase[req.params.shortURL].longURL;
+    const linkObj = urlDatabase[req.params.shortURL];
+    const longURL = linkObj.longURL;
+    linkObj.visits++;
     res.redirect(longURL);
   } else {
     res.status(404);
