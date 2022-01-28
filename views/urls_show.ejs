@@ -23,7 +23,7 @@
         </form>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       <% } else { %>
-      <h5>Please log in</h5>
+      <h5><%= error %></h5>
       
       <% } %>
     </div>

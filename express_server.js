@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 const express = require('express');
 const bodyParser = require('body-parser');
 // const cookieParser = require('cookie-parser');
@@ -141,18 +142,22 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
+  const shortURL = req.params.shortURL;
+  if (!urlDatabase.hasOwnProperty(shortURL)) {
+    return res.render('urls_show', {error: 'That URL does not exist', user: undefined});
+  }
   const userKey = req.session.userID;
   const userObj = users[userKey];
   const templateVars = {
-    shortURL: req.params.shortURL,
+    shortURL: shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: userObj,
   };
-  if (urlDatabase[req.params.shortURL].userID === userKey) {
-    res.render('urls_show', templateVars);
-  } else {
-    res.render('urls_show', {user: undefined});
+  if (urlDatabase[shortURL].userID === userKey) {
+    return res.render('urls_show', templateVars);
   }
+  
+  return res.render('urls_show', {user: undefined});
 });
 
 app.get('/urls', (req, res) => {
