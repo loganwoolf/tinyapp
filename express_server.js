@@ -46,7 +46,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   }
   
   res.status(401);
-  res.statusMessage = 'Unauthorized';
   return res.end('Error Status 401: You do not have permission to delete this URL.');
 
 });
@@ -62,7 +61,6 @@ app.post('/urls/:shortURL/edit', (req, res) => {
   }
 
   res.status(401);
-  res.statusMessage = 'Unauthorized';
   return res.end('Error Status 401: You do not have permission to edit this URL.');
 
 });
@@ -79,7 +77,6 @@ app.post("/urls", (req, res) => {
   }
 
   res.status(401);
-  res.statusMessage = 'Unauthorized';
   return res.end('Error Status 401: You can not create URLs if not logged in');
 });
 
@@ -93,7 +90,6 @@ app.post('/login', (req, res) => {
   }
 
   res.status(403);
-  res.statusMessage = 'Forbidden';
   return res.end('Error Status 403: Credentials Not Found');
   
 });
@@ -106,12 +102,10 @@ app.post('/logout', (req, res) => {
 app.post('/register', (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.status(400);
-    res.statusMessage = 'Bad Request';
     return res.end('Error Status 400: Bad Request, ensure all fields are complete.');
   }
   if (getUserIDFromEmail(req.body.email)) {
     res.status(400);
-    res.statusMessage = 'Bad Request';
     return res.end('Error Status 400:Email already in use.');
   }
   const newID = generateRandomString(6);
@@ -139,7 +133,6 @@ app.get('/urls/new', (req, res) => {
   }
   
   res.status(401);
-  res.statusMessage = 'Unauthorized';
   return res.redirect('/login');
   
 });
@@ -180,7 +173,6 @@ app.get('/u/:shortURL', (req, res) => {
   }
 
   res.status(404);
-  res.statusMessage = 'Not Found';
   return res.end('Error Status 404: Resource Not Found');
   
 });
