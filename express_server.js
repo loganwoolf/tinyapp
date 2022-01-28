@@ -200,7 +200,10 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.redirect('/urls');
+  if (verifyUserCookie(req.session.userID)) {
+    return res.redirect('/urls');
+  }
+  return res.redirect('/login');
 });
 
 
