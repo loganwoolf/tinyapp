@@ -2,15 +2,16 @@
 const utilities = (urlDatabase, users) => {
 
   const checkURL = (url) => {
-  // if single dot, add 'https://www.'
+    //remove any protocol
+    url = url.replace(/http:\/\//, '');
+    url = url.replace(/https:\/\//, '');
+
+    // if single dot, add 'https://www.'
     if (url.match(/\./g).length === 1) {
       url = `https://www.${url}`;
     }
-
-    // convert existing http to https
-    url.replace('http://', 'https://');
   
-    // if double dot, add 'https://' if missing
+    // if more than one dot, add 'https://' if missing
     if (url.search('https://') !== 0) {
       url = `https://${url}`;
     }
