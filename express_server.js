@@ -42,12 +42,12 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   const shortKey = req.params.shortURL;
   if (req.session.userID === urlDatabase[shortKey].userID) {
     delete urlDatabase[shortKey];
-    res.redirect('/urls');
-  } else {
-    res.status(401);
-    res.statusMessage = 'Unauthorized';
-    res.end('Error Status 401: You do not have permission to delete this URL.');
+    return res.redirect('/urls');
   }
+  
+  res.status(401);
+  res.statusMessage = 'Unauthorized';
+  return res.end('Error Status 401: You do not have permission to delete this URL.');
 
 });
 
@@ -58,12 +58,12 @@ app.post('/urls/:shortURL/edit', (req, res) => {
   if (req.session.userID === urlDatabase[shortKey].userID) {
     const newURL = checkURL(req.body.newURL);
     urlDatabase[shortKey].longURL = newURL;
-    res.redirect('/urls');
-  } else {
-    res.status(401);
-    res.statusMessage = 'Unauthorized';
-    res.end('Error Status 401: You do not have permission to edit this URL.');
+    return res.redirect('/urls');
   }
+
+  res.status(401);
+  res.statusMessage = 'Unauthorized';
+  return res.end('Error Status 401: You do not have permission to edit this URL.');
 
 });
 
@@ -75,12 +75,12 @@ app.post("/urls", (req, res) => {
       longURL: newURL,
       userID: req.session.userID,
     };
-    res.redirect(`/urls/${newKey}`);
-  } else {
-    res.status(401);
-    res.statusMessage = 'Unauthorized';
-    res.end('Error Status 401: You can not create URLs if not logged in');
+    return res.redirect(`/urls/${newKey}`);
   }
+
+  res.status(401);
+  res.statusMessage = 'Unauthorized';
+  return res.end('Error Status 401: You can not create URLs if not logged in');
 });
 
 app.post('/login', (req, res) => {
@@ -89,38 +89,40 @@ app.post('/login', (req, res) => {
   const userID = getUserIDFromEmail(loginEmail);
   if (userID && bcrypt.compareSync(loginPassword, users[userID].password)) {
     req.session.userID = userID;
-    res.redirect('/urls');
-  } else {
-    res.status(403);
-    res.statusMessage = 'Forbidden';
-    res.end('Error Status 403: Credentials Not Found');
+    return res.redirect('/urls');
   }
+
+  res.status(403);
+  res.statusMessage = 'Forbidden';
+  return res.end('Error Status 403: Credentials Not Found');
+  
 });
 
 app.post('/logout', (req, res) => {
   req.session = null;
-  res.redirect('/urls');
+  return res.redirect('/urls');
 });
 
 app.post('/register', (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.status(400);
     res.statusMessage = 'Bad Request';
-    res.end('Error Status 400: Bad Request, ensure all fields are complete.');
-  } else if (getUserIDFromEmail(req.body.email)) {
+    return res.end('Error Status 400: Bad Request, ensure all fields are complete.');
+  }
+  if (getUserIDFromEmail(req.body.email)) {
     res.status(400);
     res.statusMessage = 'Bad Request';
-    res.end('Error Status 400:Email already in use.');
-  } else {
-    const newID = generateRandomString(6);
-    users[newID] = {
-      id: newID,
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 10),
-    };
-    req.session.userID = newID;
-    res.redirect('/urls');
+    return res.end('Error Status 400:Email already in use.');
   }
+  const newID = generateRandomString(6);
+  users[newID] = {
+    id: newID,
+    email: req.body.email,
+    password: bcrypt.hashSync(req.body.password, 10),
+  };
+  req.session.userID = newID;
+  return res.redirect('/urls');
+  
 });
 
 //
@@ -133,12 +135,13 @@ app.get('/urls/new', (req, res) => {
     const templateVars = {
       user: userObj,
     };
-    res.render('urls_new', templateVars);
-  } else {
-    res.status(401);
-    res.statusMessage = 'Unauthorized';
-    res.redirect('/login');
+    return res.render('urls_new', templateVars);
   }
+  
+  res.status(401);
+  res.statusMessage = 'Unauthorized';
+  return res.redirect('/login');
+  
 });
 
 app.get('/urls/:shortURL', (req, res) => {
@@ -167,19 +170,19 @@ app.get('/urls', (req, res) => {
     urls: getOwnersLinks(userKey),
     user: userObj,
   };
-  res.render('urls_index', templateVars);
+  return res.render('urls_index', templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
     const longURL = urlDatabase[req.params.shortURL].longURL;
-    res.redirect(longURL);
-  } else {
-    res.status(404);
-    res.statusMessage = 'Not Found';
-    res.end('Error Status 404: Resource Not Found');
+    return res.redirect(longURL);
   }
 
+  res.status(404);
+  res.statusMessage = 'Not Found';
+  return res.end('Error Status 404: Resource Not Found');
+  
 });
 
 app.get('/urls.json', (req, res) => {
@@ -188,11 +191,14 @@ app.get('/urls.json', (req, res) => {
 
 app.get('/login', (req, res) => {
   const userKey = req.session.userID;
+  if (verifyUserCookie(userKey)) {
+    return res.redirect('/urls');
+  }
   const userObj = users[userKey];
   const templateVars = {
     user: userObj,
   };
-  res.render('urls_login', templateVars);
+  return res.render('urls_login', templateVars);
 });
 
 app.get('/register', (req, res) => {
