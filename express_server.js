@@ -157,7 +157,7 @@ app.get('/urls/:shortURL', (req, res) => {
     return res.render('urls_show', templateVars);
   }
   
-  return res.render('urls_show', {user: undefined});
+  return res.render('urls_show', {error: "Unauthorized access. Please log in." , user: undefined});
 });
 
 app.get('/urls', (req, res) => {
