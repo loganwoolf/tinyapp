@@ -14,7 +14,7 @@
     <div class="card-header"></div>
     <div class="card-body">
       <% if (user) { %>
-        <form method ="POST" action="/urls/<%= shortURL %>/edit">
+        <form action="/urls/<%= shortURL %>?_method=PUT" method ="post">
           <label class="mt-3">Long URL:
             <input name="newURL" type="text" value="<%= longURL %>">
           </label>

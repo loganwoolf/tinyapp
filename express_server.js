@@ -1,9 +1,9 @@
 /* eslint-disable no-prototype-builtins */
 const express = require('express');
 const bodyParser = require('body-parser');
-// const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
+const methodOverride = require('method-override');
 
 const { urlDatabase, users } = require('./mod/data');
 const { utilities } = require('./mod/utilities');
@@ -26,7 +26,7 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
-// app.use(cookieParser());
+app.use(methodOverride('_method'));
 app.use(cookieSession({
   name: 'session',
   keys: ['eloquent creek gopher', 'misbehaving blue donkey'],
@@ -37,7 +37,7 @@ const PORT = 3000;
 //
 // // POST routes // //
 //
-app.post('/urls/:shortURL/delete', (req, res) => {
+app.delete('/urls/:shortURL', (req, res) => {
   // check credentials for deleting key
   const shortKey = req.params.shortURL;
   if (req.session.userID === urlDatabase[shortKey].userID) {
@@ -50,7 +50,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 });
 
-app.post('/urls/:shortURL/edit', (req, res) => {
+app.put('/urls/:shortURL', (req, res) => {
   //check credentials for editing key
   const shortKey = req.params.shortURL;
   // check if user from cookie is owner of route
