@@ -73,7 +73,7 @@ app.post("/urls", (req, res) => {
       shortURL: newKey,
       longURL: newURL,
       userID: req.session.userID,
-      visits: 0,
+      visits: [],
       visitors: [],
 
     };
@@ -181,7 +181,6 @@ app.get('/u/:shortURL', (req, res) => {
       visitor: cookie,
       date: new Date(),
     });
-    console.log(linkObj);
     if (!cookie) {
     // if client does not have unique id
       const uniqueID = generateRandomString(8);
