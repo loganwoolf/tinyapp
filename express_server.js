@@ -73,7 +73,9 @@ app.post("/urls", (req, res) => {
       shortURL: newKey,
       longURL: newURL,
       userID: req.session.userID,
-      visits: 0
+      visits: 0,
+      visitors: [],
+
     };
     return res.redirect(`/urls/${newKey}`);
   }
@@ -97,7 +99,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  req.session = null;
+  req.session.userID = null;
   return res.redirect('/urls');
 });
 
@@ -148,8 +150,9 @@ app.get('/urls/:shortURL', (req, res) => {
   const userObj = users[userKey];
   const templateVars = {
     shortURL: shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    visits: urlDatabase[req.params.shortURL].visits,
+    longURL: urlDatabase[shortURL].longURL,
+    visits: urlDatabase[shortURL].visits,
+    visitors: urlDatabase[shortURL].visitors,
     user: userObj,
   };
   if (urlDatabase[shortURL].userID === userKey) {
@@ -174,6 +177,22 @@ app.get('/u/:shortURL', (req, res) => {
     const linkObj = urlDatabase[req.params.shortURL];
     const longURL = linkObj.longURL;
     linkObj.visits++;
+    if (!req.session.uniqueID) {
+    // if client does not have unique id
+      const uniqueID = generateRandomString(8);
+      // set them up the cookie
+      req.session.uniqueID = uniqueID;
+      // increment unique visitors count
+      linkObj.visitors.push(uniqueID);
+    } else {
+      // if client does have unique id
+      const uniqueID = req.session.uniqueID;
+      // if they haven't visited before, add them to list
+      if (!linkObj.visitors.includes(uniqueID)) {
+        linkObj.visitors.push(uniqueID);
+      }
+    }
+
     return res.redirect(longURL);
   }
 

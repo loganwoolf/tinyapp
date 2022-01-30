@@ -6,24 +6,28 @@ const urlDatabase = {
     longURL: "https://www.coca-cola.com",
     userID: "Yuol2b",
     visits: 10,
+    visitors: ['lsdkrhsk', '723k4hse', 'impmn76r', 'ejnj89ty']
   },
   g6U87y: {
     shortURL: "g6U87y",
     longURL: "https://www.pepsi.com",
     userID: "Yuol2b",
     visits: 20,
+    visitors: ['lsdkrhsk', '723k4hse']
   },
   i3BoGr: {
     shortURL: "i3BoGr",
     longURL: "https://www.google.com",
     userID: "yqB7hV",
     visits: 30,
+    visitors: ['lsdkrhsk', '723k4hse', 'impmn76r', 'ejnj89ty']
   },
   j3bon7: {
     shortURL: "j3bon7",
     longURL: "https://www.yahoo.ca",
     userID: "yqB7hV",
     visits: 40,
+    visitors: ['lsdkrhsk', '723k4hse']
   }
 };
 
