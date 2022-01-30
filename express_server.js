@@ -176,20 +176,24 @@ app.get('/u/:shortURL', (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
     const linkObj = urlDatabase[req.params.shortURL];
     const longURL = linkObj.longURL;
-    linkObj.visits++;
-    if (!req.session.uniqueID) {
+    let cookie = req.session.uniqueID;
+    linkObj.visits.unshift({
+      visitor: cookie,
+      date: new Date(),
+    });
+    console.log(linkObj);
+    if (!cookie) {
     // if client does not have unique id
       const uniqueID = generateRandomString(8);
       // set them up the cookie
-      req.session.uniqueID = uniqueID;
+      cookie = uniqueID;
       // increment unique visitors count
       linkObj.visitors.push(uniqueID);
     } else {
       // if client does have unique id
-      const uniqueID = req.session.uniqueID;
       // if they haven't visited before, add them to list
-      if (!linkObj.visitors.includes(uniqueID)) {
-        linkObj.visitors.push(uniqueID);
+      if (!linkObj.visitors.includes(cookie)) {
+        linkObj.visitors.push(cookie);
       }
     }
 

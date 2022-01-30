@@ -24,8 +24,25 @@
         <p class="card-text">Short URL: 
           <a target="_blank" href="/u/<%= shortURL %>"><%= shortURL %></a>
         </p>
-        <p>Times Visited: <%= visits %></p>
+        <p>Times Visited: <%= visits.length %></p>
         <p>Unique Visitors: <%= visitors.length %></p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Visited By</th>
+              <th scope="col">Visited On</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let visit of visits) { %>
+            <tr>
+              <td><%= visit.visitor %></td>
+              <td><%= visit.date.toString().slice(4,15) %></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
       <% } else { %>
       <h5><%= error %></h5>
       

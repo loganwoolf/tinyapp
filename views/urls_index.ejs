@@ -29,7 +29,7 @@
           <tr>
             <td><%= url %></td>
             <td><%= urls[url].longURL %></td>
-            <td><%= urls[url].visits %></td>
+            <td><%= urls[url].visits.length %></td>
             <td><%= urls[url].visitors.length %></td>
             <td>
               <form <%= `action=/urls/${url}` %> method="get">
