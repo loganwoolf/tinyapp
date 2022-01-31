@@ -222,6 +222,9 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
   const userKey = req.session.userID;
   const userObj = users[userKey];
+  if (userObj) {
+    return res.redirect('/urls')
+  }
   const templateVars = {
     user: userObj,
   };
