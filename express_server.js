@@ -99,7 +99,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  req.session.userID = null;
+  delete req.session.userID;
   return res.redirect('/urls');
 });
 
@@ -176,25 +176,24 @@ app.get('/u/:shortURL', (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
     const linkObj = urlDatabase[req.params.shortURL];
     const longURL = linkObj.longURL;
-    let cookie = req.session.uniqueID;
-    linkObj.visits.unshift({
-      visitor: cookie,
-      date: new Date(),
-    });
-    if (!cookie) {
+    if (!req.session.uniqueID) {
     // if client does not have unique id
       const uniqueID = generateRandomString(8);
       // set them up the cookie
-      cookie = uniqueID;
+      req.session.uniqueID = uniqueID;
       // increment unique visitors count
-      linkObj.visitors.push(uniqueID);
+      linkObj.visitors.push(req.session.uniqueID);
     } else {
       // if client does have unique id
       // if they haven't visited before, add them to list
-      if (!linkObj.visitors.includes(cookie)) {
-        linkObj.visitors.push(cookie);
+      if (!linkObj.visitors.includes(req.session.uniqueID)) {
+        linkObj.visitors.push(req.session.uniqueID);
       }
     }
+    linkObj.visits.unshift({
+      visitor: req.session.uniqueID,
+      date: new Date(),
+    });
 
     return res.redirect(longURL);
   }
