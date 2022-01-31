@@ -55,10 +55,7 @@ const utilities = (urlDatabase, users) => {
   };
 
   const verifyUserCookie = (id) => {
-    if (users[id]) {
-      return true;
-    }
-    return false;
+    return users[id];
   };
 
   return {
