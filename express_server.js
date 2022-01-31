@@ -16,13 +16,7 @@ const {
   verifyUserCookie,
 } = utilities(urlDatabase, users);
 
-/* var bcrypt = require('bcryptjs');
-var salt = bcrypt.genSaltSync(10);
-var hash = bcrypt.hashSync("B4c0/\/", salt); */
-// const salt = bcrypt.genSaltSync(10);
-
 const app = express();
-
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
@@ -44,25 +38,19 @@ app.delete('/urls/:shortURL', (req, res) => {
     delete urlDatabase[shortKey];
     return res.redirect('/urls');
   }
-  
   res.status(401);
   return res.end('Error Status 401: You do not have permission to delete this URL.');
-
 });
 
 app.put('/urls/:shortURL', (req, res) => {
-  //check credentials for editing key
   const shortKey = req.params.shortURL;
-  // check if user from cookie is owner of route
   if (req.session.userID === urlDatabase[shortKey].userID) {
     const newURL = checkURL(req.body.newURL);
     urlDatabase[shortKey].longURL = newURL;
     return res.redirect('/urls');
   }
-
   res.status(401);
   return res.end('Error Status 401: You do not have permission to edit this URL.');
-
 });
 
 app.post("/urls", (req, res) => {
@@ -79,7 +67,6 @@ app.post("/urls", (req, res) => {
     };
     return res.redirect(`/urls/${newKey}`);
   }
-
   res.status(401);
   return res.end('Error Status 401: You can not create URLs if not logged in');
 });
@@ -92,10 +79,8 @@ app.post('/login', (req, res) => {
     req.session.userID = userID;
     return res.redirect('/urls');
   }
-
   res.status(403);
   return res.end('Error Status 403: Credentials Not Found');
-  
 });
 
 app.post('/logout', (req, res) => {
@@ -120,7 +105,6 @@ app.post('/register', (req, res) => {
   };
   req.session.userID = newID;
   return res.redirect('/urls');
-  
 });
 
 //
@@ -135,10 +119,8 @@ app.get('/urls/new', (req, res) => {
     };
     return res.render('urls_new', templateVars);
   }
-  
   res.status(401);
   return res.redirect('/login');
-  
 });
 
 app.get('/urls/:shortURL', (req, res) => {
@@ -158,7 +140,6 @@ app.get('/urls/:shortURL', (req, res) => {
   if (urlDatabase[shortURL].userID === userKey) {
     return res.render('urls_show', templateVars);
   }
-  
   return res.render('urls_show', {error: "Unauthorized access. Please log in." , user: undefined});
 });
 
@@ -177,15 +158,10 @@ app.get('/u/:shortURL', (req, res) => {
     const linkObj = urlDatabase[req.params.shortURL];
     const longURL = linkObj.longURL;
     if (!req.session.uniqueID) {
-    // if client does not have unique id
       const uniqueID = generateRandomString(8);
-      // set them up the cookie
       req.session.uniqueID = uniqueID;
-      // increment unique visitors count
       linkObj.visitors.push(req.session.uniqueID);
     } else {
-      // if client does have unique id
-      // if they haven't visited before, add them to list
       if (!linkObj.visitors.includes(req.session.uniqueID)) {
         linkObj.visitors.push(req.session.uniqueID);
       }
@@ -194,13 +170,10 @@ app.get('/u/:shortURL', (req, res) => {
       visitor: req.session.uniqueID,
       date: new Date(),
     });
-
     return res.redirect(longURL);
   }
-
   res.status(404);
   return res.end('Error Status 404: Resource Not Found');
-  
 });
 
 app.get('/urls.json', (req, res) => {
@@ -223,7 +196,7 @@ app.get('/register', (req, res) => {
   const userKey = req.session.userID;
   const userObj = users[userKey];
   if (userObj) {
-    return res.redirect('/urls')
+    return res.redirect('/urls');
   }
   const templateVars = {
     user: userObj,

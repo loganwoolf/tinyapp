@@ -2,20 +2,14 @@
 const utilities = (urlDatabase, users) => {
 
   const checkURL = (url) => {
-    //remove any protocol
     url = url.replace(/http:\/\//, '');
     url = url.replace(/https:\/\//, '');
-
-    // if single dot, add 'https://www.'
     if (url.match(/\./g).length === 1) {
       url = `https://www.${url}`;
     }
-  
-    // if more than one dot, add 'https://' if missing
     if (url.search('https://') !== 0) {
       url = `https://${url}`;
     }
-
     return url;
   };
 
@@ -31,7 +25,6 @@ const utilities = (urlDatabase, users) => {
         outputStr += String.fromCharCode(rndm + 55);
       }
     }
-
     return outputStr;
   };
 
